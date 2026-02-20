@@ -144,6 +144,8 @@ export default function EmployeeList() {
   });
 
   const [showFilters, setShowFilters] = useState(false);
+  const [sortBy, setSortBy] = useState('employee_number');
+  const [sortDirection, setSortDirection] = useState('asc');
 
   const getReportingChain = useCallback((employeeId) => {
     const chain = [];
@@ -251,14 +253,23 @@ export default function EmployeeList() {
     fetchDropdowns();
   }, []);
 
-  // Enhanced filtering logic
+  const handleSort = (column) => {
+    if (sortBy === column) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortBy(column);
+      setSortDirection('asc');
+    }
+  };
+
+  // Enhanced filtering and sorting logic
   useEffect(() => {
-    let filtered = employees;
+    let currentFilteredEmployees = employees;
 
     // Text search filter
     const term = searchTerm.trim().toLowerCase();
     if (term) {
-      filtered = filtered.filter(emp =>
+      currentFilteredEmployees = currentFilteredEmployees.filter(emp =>
         emp.employee_number.toString().includes(term) ||
         emp.name.toLowerCase().includes(term) ||
         emp.surname.toLowerCase().includes(term)
@@ -267,37 +278,57 @@ export default function EmployeeList() {
 
     // Branch filter
     if (filters.branch) {
-      filtered = filtered.filter(emp => emp.branch_number === parseInt(filters.branch));
+      currentFilteredEmployees = currentFilteredEmployees.filter(emp => emp.branch_number === parseInt(filters.branch));
     }
 
     // Department filter
     if (filters.department) {
-      filtered = filtered.filter(emp => emp.dept_number === parseInt(filters.department));
+      currentFilteredEmployees = currentFilteredEmployees.filter(emp => emp.dept_number === parseInt(filters.department));
     }
 
     // Role filter
     if (filters.role) {
-      filtered = filtered.filter(emp => emp.role_number === parseInt(filters.role));
+      currentFilteredEmployees = currentFilteredEmployees.filter(emp => emp.role_number === parseInt(filters.role));
     }
 
     // Salary range filter
     if (filters.salaryMin) {
-      filtered = filtered.filter(emp => emp.salary >= parseFloat(filters.salaryMin));
+      currentFilteredEmployees = currentFilteredEmployees.filter(emp => emp.salary >= parseFloat(filters.salaryMin));
     }
     if (filters.salaryMax) {
-      filtered = filtered.filter(emp => emp.salary <= parseFloat(filters.salaryMax));
+      currentFilteredEmployees = currentFilteredEmployees.filter(emp => emp.salary <= parseFloat(filters.salaryMax));
     }
 
     // Birth date range filter
     if (filters.birthDateFrom) {
-      filtered = filtered.filter(emp => new Date(emp.birth_date) >= new Date(filters.birthDateFrom));
+      currentFilteredEmployees = currentFilteredEmployees.filter(emp => new Date(emp.birth_date) >= new Date(filters.birthDateFrom));
     }
     if (filters.birthDateTo) {
-      filtered = filtered.filter(emp => new Date(emp.birth_date) <= new Date(filters.birthDateTo));
+      currentFilteredEmployees = currentFilteredEmployees.filter(emp => new Date(emp.birth_date) <= new Date(filters.birthDateTo));
     }
 
-    setFilteredEmployees(filtered);
-  }, [searchTerm, employees, filters]);
+    // Sorting logic
+    const sortedEmployees = [...currentFilteredEmployees].sort((a, b) => {
+      const aValue = a[sortBy];
+      const bValue = b[sortBy];
+
+      if (typeof aValue === 'string' && typeof bValue === 'string') {
+        return sortDirection === 'asc' ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+      }
+      if (typeof aValue === 'number' && typeof bValue === 'number') {
+        return sortDirection === 'asc' ? aValue - bValue : bValue - aValue;
+      }
+      // Handle date comparison
+      if (sortBy === 'birth_date') {
+        const dateA = new Date(aValue);
+        const dateB = new Date(bValue);
+        return sortDirection === 'asc' ? dateA.getTime() - dateB.getTime() : dateB.getTime() - dateA.getTime();
+      }
+      return 0;
+    });
+
+    setFilteredEmployees(sortedEmployees);
+  }, [searchTerm, employees, filters, sortBy, sortDirection]);
 
   const handleFilterChange = (filterName, value) => {
     setFilters(prev => ({
@@ -696,26 +727,47 @@ export default function EmployeeList() {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50 sticky top-0">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Employee #
+                <th
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                  onClick={() => handleSort('employee_number')}
+                >
+                  Employee # {sortBy === 'employee_number' && (sortDirection === 'asc' ? '▲' : '▼')}
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Name
+                <th
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                  onClick={() => handleSort('name')}
+                >
+                  Name {sortBy === 'name' && (sortDirection === 'asc' ? '▲' : '▼')}
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Branch
+                <th
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                  onClick={() => handleSort('branch_number')}
+                >
+                  Branch {sortBy === 'branch_number' && (sortDirection === 'asc' ? '▲' : '▼')}
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Department
+                <th
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                  onClick={() => handleSort('dept_number')}
+                >
+                  Department {sortBy === 'dept_number' && (sortDirection === 'asc' ? '▲' : '▼')}
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Role
+                <th
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                  onClick={() => handleSort('role_number')}
+                >
+                  Role {sortBy === 'role_number' && (sortDirection === 'asc' ? '▲' : '▼')}
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Salary
+                <th
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                  onClick={() => handleSort('salary')}
+                >
+                  Salary {sortBy === 'salary' && (sortDirection === 'asc' ? '▲' : '▼')}
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Birth Date
+                <th
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                  onClick={() => handleSort('birth_date')}
+                >
+                  Birth Date {sortBy === 'birth_date' && (sortDirection === 'asc' ? '▲' : '▼')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Manages

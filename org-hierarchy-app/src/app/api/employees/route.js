@@ -150,6 +150,8 @@ export async function POST(request) {
       surname,
       birth_date,
       salary,
+      email,
+      password,
     } = body;
 
     await prisma.employee.create({
@@ -165,6 +167,8 @@ export async function POST(request) {
         user: {
           create: {
             employee_number: employee_number,
+            email: email,
+            password: password,
           },
         },
       },
@@ -179,7 +183,7 @@ export async function POST(request) {
       JSON.stringify({ error: 'Database error', details: err.message }),
       { status: 500, headers: { 'Content-Type': 'application/json' } }
     );
-
+  }
 }
 
 /**

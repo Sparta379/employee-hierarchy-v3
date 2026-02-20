@@ -21,15 +21,29 @@ export default function Header() {
     setUserRole(role);
 
     if (email) {
-      // Gravatar hash is computed on the server in /api/profile
-      // For now, client-side hash for gravatar display (will be replaced by actual profile fetch)
-      const hashEmail = email.trim().toLowerCase();
-      // Using a simple hash for client-side display, ideally fetched from server-side profile endpoint.
-      // Crypto module is not available in client-side environment.
-      // For local testing, can manually hash or use a placeholder.
-      // const hash = crypto.createHash('sha256').update(hashEmail).digest('hex');
-      // setGravatarUrl(`https://0.gravatar.com/avatar/${hash}`);
-      setGravatarUrl(`https://www.gravatar.com/avatar/?d=mp`); // Placeholder for now
+      async function fetchGravatar() {
+        try {
+          const gravatarRes = await fetch(`/api/profile?email=${email}`);
+          if (gravatarRes.ok) {
+            const gravatarData = await gravatarRes.json();
+            // Assuming gravatarData contains an image URL, adjust as per actual API response
+            // Gravatar API typically returns an array of profiles, each with photos
+            if (gravatarData.entry && gravatarData.entry.length > 0 && gravatarData.entry[0].photos && gravatarData.entry[0].photos.length > 0) {
+              setGravatarUrl(gravatarData.entry[0].photos[0].value);
+            } else {
+              setGravatarUrl(`https://www.gravatar.com/avatar/?d=mp`); // Default if no photo
+            }
+          } else {
+            setGravatarUrl(`https://www.gravatar.com/avatar/?d=mp`); // Default on API error
+          }
+        } catch (error) {
+          console.error("Failed to fetch gravatar:", error);
+          setGravatarUrl(`https://www.gravatar.com/avatar/?d=mp`); // Default on fetch error
+        }
+      }
+      fetchGravatar();
+    } else {
+      setGravatarUrl(`https://www.gravatar.com/avatar/?d=mp`); // Default if no email
     }
 
     const syncToken = () => {
@@ -88,6 +102,11 @@ export default function Header() {
               <li>
                 <Link href="/management" className="hover:text-blue-400 transition-colors">
                   Org Chart
+                </Link>
+              </li>
+              <li>
+                <Link href="/hierarchy" className="hover:text-blue-400 transition-colors">
+                  Hierarchy
                 </Link>
               </li>
               <li>
