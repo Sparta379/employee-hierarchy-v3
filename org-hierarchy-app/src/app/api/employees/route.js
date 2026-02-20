@@ -69,6 +69,7 @@ export async function GET(request) {
     });
 
   } catch (err) {
+    console.error('Database error in GET:', err);
     return new Response(
       JSON.stringify({ error: 'Database error', details: err.message }),
       {
@@ -386,9 +387,9 @@ export async function DELETE(request) {
       headers: { 'Content-Type': 'application/json' },
     });
   } catch (err) {
+    console.error('Database error in DELETE:', err);
     return new Response(
       JSON.stringify({ error: 'Database error', details: err.message }),
-      console.error(err),
       { status: 500, headers: { 'Content-Type': 'application/json' } }
     );
 

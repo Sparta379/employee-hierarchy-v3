@@ -71,7 +71,7 @@ export async function GET(request) {
       JSON.stringify({ error: 'Database error', details: err.message }),
       { status: 500, headers: { 'Content-Type': 'application/json' } }
     );
-
+  }
 }
 
 /**
@@ -129,7 +129,7 @@ export async function POST(request) {
       JSON.stringify({ error: 'Database error', details: err.message }),
       { status: 500, headers: { 'Content-Type': 'application/json' } }
     );
-
+  }
 }
 
 /**
@@ -205,7 +205,7 @@ export async function PUT(request) {
       JSON.stringify({ error: 'Database error', details: err.message }),
       { status: 500, headers: { 'Content-Type': 'application/json' } }
     );
-
+  }
 }
 
 /**
@@ -285,5 +285,5 @@ export async function DELETE(request) {
       JSON.stringify({ error: 'Database error', details: err.message }),
       { status: 500, headers: { 'Content-Type': 'application/json' } }
     );
-
+  }
 }
