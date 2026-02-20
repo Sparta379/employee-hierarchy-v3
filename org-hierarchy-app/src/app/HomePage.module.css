@@ -1,0 +1,64 @@
+/* Light mode defaults */
+.page {
+  --tree-bg: #f9fafb;
+  --tree-node-bg: #2563eb;
+  --tree-node-hover: #1d4ed8;
+  --tree-text: #1f2937;
+  --tree-node-text: #ffffff;
+  --tree-border: #d1d5db;
+  --tree-shadow: rgba(0, 0, 0, 0.05);
+  --tree-connector: #94a3b8;
+  
+  background-color: var(--background);
+  overflow: hidden !important;
+  color: var(--text);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  .page {
+    --tree-bg: #0f172a;
+    --tree-node-bg: #3b82f6;
+    --tree-node-hover: #2563eb;
+    --tree-text: #f1f5f9;
+    --tree-node-text: #ffffff;
+    --tree-border: #334155;
+    --tree-shadow: rgba(255, 255, 255, 0.05);
+    --tree-connector: #64748b;
+    
+  }
+}
+
+.viewToggleBar {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin: 0.5rem;
+}
+
+.toggleButton {
+  padding: 0.5rem 1.25rem;
+  border-radius: 0.375rem;
+  font-weight: 600;
+  border: 1px solid var(--border);
+  background-color: var(--foreground);
+  color: var(--text);
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.toggleButton:hover {
+  border-color: var(--button-bg);
+  color: var(--button-bg);
+}
+
+.toggleButton.active {
+  background-color: var(--button-bg);
+  color: var(--button-bg);
+  border-color: var(--button-bg);
+}

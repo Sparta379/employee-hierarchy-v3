@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Light Mode (default) */
+  --color-primary: #1e3a8a; /* Darker blue */
+  --color-secondary: #f97316; /* Orange */
+  --color-accent: #3b82f6; /* Lighter blue */
+  --color-background: #f8fafc; /* Light gray */
+  --color-surface: #ffffff; /* White */
+  --color-text-default: #1f2937; /* Dark gray */
+  --color-text-secondary: #4b5563; /* Medium gray */
+  --color-border: #e2e8f0; /* Light border gray */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Dark Mode */
+    --color-primary: #3b82f6; /* Blue */
+    --color-secondary: #fb923c; /* Orange */
+    --color-accent: #60a5fa; /* Lighter blue */
+    --color-background: #111827; /* Dark slate */
+    --color-surface: #1f2937; /* Darker slate */
+    --color-text-default: #e5e7eb; /* Light gray */
+    --color-text-secondary: #9ca3af; /* Muted gray */
+    --color-border: #374151; /* Dark border gray */
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-geist-sans); /* Use Geist Sans as primary font */
+  background-color: var(--color-background);
+  color: var(--color-text-default);
+  line-height: 1.6;
+  /* @apply antialiased; /* Apply antialiasing from Tailwind */
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-geist-sans); /* Headings also use Geist Sans */
+  color: var(--color-text-default);
+  /* @apply font-bold; */
+}
+
+a {
+  color: var(--color-accent);
+  text-decoration: none;
+  /* @apply hover:underline; */
+}
+
+/* Basic button styling (can be overridden by component-specific styles) */
+button, .button {
+  /* @apply px-4 py-2 rounded-md font-medium transition-colors duration-200; */
+  background-color: var(--color-primary);
+  color: var(--color-surface);
+}
+
+button:hover, .button:hover {
+  /* @apply brightness-110; */
+}
+
+/* Form element base styling */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+textarea,
+select {
+  /* @apply w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent; */
+  background-color: var(--color-surface);
+  border-color: var(--color-border);
+  color: var(--color-text-default);
+}
+
+/* Focus styles */
+*:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.45); /* Tailwind blue-500 with opacity */
+}

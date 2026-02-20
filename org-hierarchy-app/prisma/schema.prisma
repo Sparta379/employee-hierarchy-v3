@@ -1,0 +1,72 @@
+generator client {
+  provider   = "prisma-client-js"
+  engineType = "library"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Employee {
+  employee_number  String                 @id @unique @map("employee_number")
+  dept_number      Int                    @map("dept_number")
+  branch_number    Int                    @map("branch_number")
+  role_number      Int                    @map("role_number")
+  name             String
+  surname          String
+  birth_date       DateTime               @map("birth_date") @db.Date
+  salary           Float
+  branch           Branch                 @relation(fields: [branch_number], references: [branch_id])
+  department       Department             @relation(fields: [dept_number], references: [dept_id])
+  role             Role                   @relation(fields: [role_number], references: [role_id])
+  managerOf        ReportingLineManager[] @relation("Employee")
+  managedEmployees ReportingLineManager[] @relation("Manager")
+  user             User?
+
+  @@map("employees")
+}
+
+model User {
+  employee_number String    @id @unique @map("employee_number")
+  email           String    @unique
+  password        String
+  token           String?
+  token_expire    DateTime? @map("token_expire")
+  employee        Employee  @relation(fields: [employee_number], references: [employee_number])
+
+  @@map("users")
+}
+
+model ReportingLineManager {
+  employee_id String   @map("employee_id")
+  manager_id  String   @map("manager_id")
+  employee    Employee @relation("Employee", fields: [employee_id], references: [employee_number])
+  manager     Employee @relation("Manager", fields: [manager_id], references: [employee_number])
+
+  @@id([employee_id, manager_id])
+  @@map("reporting_line_managers")
+}
+
+model Branch {
+  branch_id Int        @id @default(autoincrement()) @map("branch_id")
+  name      String     @unique
+  employees Employee[]
+
+  @@map("branches")
+}
+
+model Department {
+  dept_id   Int        @id @default(autoincrement()) @map("dept_id")
+  name      String     @unique
+  employees Employee[]
+
+  @@map("departments")
+}
+
+model Role {
+  role_id   Int        @id @default(autoincrement()) @map("role_id")
+  name      String     @unique
+  employees Employee[]
+
+  @@map("roles")
+}
