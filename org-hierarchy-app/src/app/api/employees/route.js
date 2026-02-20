@@ -77,7 +77,7 @@ export async function GET(request) {
         headers: { 'Content-Type': 'application/json' },
       }
     );
-
+  }
 }
 
 /**
@@ -281,7 +281,7 @@ export async function PUT(request) {
       JSON.stringify({ error: 'Database error', details: err.message }),
       { status: 500, headers: { 'Content-Type': 'application/json' } }
     );
-
+  }
 }
 
 /**
