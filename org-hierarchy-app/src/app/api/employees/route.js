@@ -392,5 +392,5 @@ export async function DELETE(request) {
       JSON.stringify({ error: 'Database error', details: err.message }),
       { status: 500, headers: { 'Content-Type': 'application/json' } }
     );
-
+  }
 }
