@@ -7,7 +7,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prisma:generate": "prisma generate",
+    "load:local": "k6 run load-tests/k6-script.js",
+    "load:docker": "docker run --rm -i -v \"%CD%\":/scripts -w /scripts loadimpact/k6 run load-tests/k6-script.js"
   },
   "dependencies": {
     "@gravatar-com/quick-editor": "^0.8.0",
