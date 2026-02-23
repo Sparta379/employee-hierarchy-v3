@@ -12,6 +12,15 @@
   --color-text-default: #1f2937; /* Dark gray */
   --color-text-secondary: #4b5563; /* Medium gray */
   --color-border: #e2e8f0; /* Light border gray */
+
+  /* Alias variables used throughout the app */
+  --background: var(--color-background);
+  --foreground: var(--color-surface);
+  --text: var(--color-text-default);
+  --border: var(--color-border);
+  --button-bg: var(--color-primary);
+  --button-hover: var(--color-accent);
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -25,6 +34,15 @@
     --color-text-default: #e5e7eb; /* Light gray */
     --color-text-secondary: #9ca3af; /* Muted gray */
     --color-border: #374151; /* Dark border gray */
+
+    /* Dark-mode aliases */
+    --background: var(--color-background);
+    --foreground: var(--color-surface);
+    --text: var(--color-text-default);
+    --border: var(--color-border);
+    --button-bg: var(--color-primary);
+    --button-hover: var(--color-accent);
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
   }
 }
 

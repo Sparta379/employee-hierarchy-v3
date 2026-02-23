@@ -75,7 +75,7 @@ export default function Header() {
       <div className="flex items-center">
         <Link href="/" className="flex items-center space-x-2">
           <Image
-            src="/public/images/EHM-Light.png" // Use appropriate logo path
+            src="/images/EHM-Light.png"
             alt="EPI-USE Logo"
             width={40}
             height={40}
@@ -124,7 +124,7 @@ export default function Header() {
           <>
             <Link href="/profile" className="flex items-center">
               <Image
-                src={gravatarUrl || '/public/images/default-avatar.png'} // Use dynamic gravatarUrl or default
+                src={gravatarUrl || '/images/default-avatar.png'}
                 alt="Profile"
                 width={32}
                 height={32}

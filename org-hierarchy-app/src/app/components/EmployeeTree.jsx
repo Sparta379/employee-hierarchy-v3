@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 //  // Will be removed after Tailwind conversion
 import { FaSearch, FaRedo, FaExpandArrowsAlt, FaCompressArrowsAlt, FaTrashAlt, FaPlus } from 'react-icons/fa';
 import Image from 'next/image';
+import CryptoJS from 'crypto-js';
 
 // Moved outside to avoid re-creation in render, and ensuring it runs client-side
 // Crypto module is not available in client-side environment for this exact usage in Next.js 13+ unless polyfilled or bundled correctly.
@@ -28,11 +29,18 @@ import Image from 'next/image';
 //   return `https://www.gravatar.com/avatar/?d=mp&s=${size}`; // Generic Gravatar placeholder
 // }
 
+async function getGravatarUrl(email, size = 80, defaultImage = 'identicon') {
+  if (!email) return '/images/default-avatar.png';
+  const hash = CryptoJS.SHA256(email.trim().toLowerCase()).toString();
+  return `https://www.gravatar.com/avatar/${hash}?s=${size}&d=${encodeURIComponent(defaultImage)}`;
+}
+
 export default function EmployeeTree() {
   const canvasRef = useRef(null);
   const [treeData, setTreeData] = useState(null);
   const gravatarsRef = useRef({}); // Store Image objects for canvas drawing
   const [employeeData, setEmployeeData] = useState({});
+  const [hierarchyData, setHierarchyData] = useState([]);
   const [scale, setScale] = useState(1);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
@@ -55,6 +63,16 @@ export default function EmployeeTree() {
   const [draggingUnassigned, setDraggingUnassigned] = useState(null);
 
   const [isOverTrash, setIsOverTrash] = useState(false);
+
+  const fetchUnassignedEmployees = useCallback(async () => {
+    try {
+      const response = await fetch('/api/not_assigned');
+      const data = await response.json();
+      setUnassignedEmployees(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error('Error fetching unassigned employees:', err);
+    }
+  }, []);
 
   // Memoize colors to prevent re-creation on every render
   const colors = useMemo(() => ({
@@ -138,18 +156,8 @@ export default function EmployeeTree() {
   }, [handleWheel]);
 
   useEffect(() => {
-    async function fetchUnassignedEmployees() {
-      try {
-        const response = await fetch('/api/not_assigned');
-        const data = await response.json();
-        setUnassignedEmployees(data);
-      } catch (err) {
-        console.error('Error fetching unassigned employees:', err);
-      }
-    }
-    
     fetchUnassignedEmployees();
-  }, []);
+  }, [fetchUnassignedEmployees]);
 
   const handleUnassignedDragStart = (employee) => {
     setDraggingUnassigned(employee);
@@ -253,6 +261,25 @@ export default function EmployeeTree() {
 
   const [foundNode, setFoundNode] = useState(null);
 
+  const getReportingChain = useCallback((employeeId) => {
+    const chain = [];
+    const visited = new Set();
+    let current = employeeId;
+
+    while (current && !visited.has(current)) {
+      visited.add(current);
+      const rel = hierarchyData.find(h => h.employee_id === current);
+      if (rel) {
+        chain.push(rel.manager_id);
+        current = rel.manager_id;
+      } else {
+        break;
+      }
+    }
+
+    return chain;
+  }, [hierarchyData]);
+
   // Update hierarchy in database
   const updateHierarchy = async (employeeId, newManagerId, oldManagerId) => {
     try {
@@ -316,6 +343,7 @@ export default function EmployeeTree() {
       ]);
       
       const hierarchyData = await hierarchyRes.json();
+      setHierarchyData(hierarchyData);
       const tree = buildTree(hierarchyData, employeesWithDetails);
       setTreeData(tree);
       
@@ -428,8 +456,7 @@ export default function EmployeeTree() {
       await Promise.all(
         employees.map(async (emp) => {
           const email = userMap[emp.employee_number] || '';
-          // Using a simple generic gravatar for client-side drawing
-          const gravatarUrl = email ? `https://www.gravatar.com/avatar/${btoa(email)}?d=mp&s=80` : '/public/images/default-avatar.png';
+          const gravatarUrl = await getGravatarUrl(email);
 
           const img = new Image();
           img.src = gravatarUrl;
@@ -534,6 +561,7 @@ export default function EmployeeTree() {
         const hierarchyRes = await fetch('/api/hierarchy');
         
         const hierarchyData = await hierarchyRes.json();
+        setHierarchyData(hierarchyData);
         const tree = buildTree(hierarchyData, employeesWithDetails);
         setTreeData(tree);
         

@@ -151,8 +151,6 @@ export async function POST(request) {
       surname,
       birth_date,
       salary,
-      email,
-      password,
     } = body;
 
     await prisma.employee.create({
@@ -165,13 +163,6 @@ export async function POST(request) {
         surname,
         birth_date: new Date(birth_date),
         salary,
-        user: {
-          create: {
-            employee_number: employee_number,
-            email: email,
-            password: password,
-          },
-        },
       },
     });
 
