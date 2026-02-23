@@ -60,7 +60,7 @@ The EPI-USE-Employee Hierarchy Management Web App is a **Next.js** application w
 
 ### **Database**
 
-* **Platform**: MySQL database hosted on an Oracle Cloud VM (Linux)
+* **Platform**: Postgres database hosted on Neon (managed cloud Postgres)
 * **Tables** (key examples):
 
   * `users`
@@ -84,7 +84,7 @@ The EPI-USE-Employee Hierarchy Management Web App is a **Next.js** application w
 
 1. **User Request** → Browser sends request to Next.js frontend.
 2. **API Call** → Frontend fetches data from Vercel API routes.
-3. **Database Query** → API route queries MySQL server.
+3. **Database Query** → API route queries the Neon Postgres database.
 4. **Response** → API returns JSON to frontend.
 5. **UI Update** → Next.js renders updated UI (SSR/CSR).
 
@@ -147,10 +147,10 @@ The EPI-USE-Employee Hierarchy Management Web App is a **Next.js** application w
 * Vercel’s free tier provides preview and production domains, though it uses low-end server hardware, which can affect responsiveness. This is common among free-tier hosting options.
 * While AWS offers more powerful infrastructure, its steep learning curve and my lack of prior experience made it impractical given the project’s time constraints.
 
-## **Database**: MySQL hosted on an Oracle Cloud VM (Linux)
-* The database is a **MySQL server hosted on an Oracle Cloud VM running Linux**.
-* This approach was chosen primarily due to my familiarity with MySQL and the flexibility offered by hosting it on an Oracle VM.<br> Unlike many free-tier managed MySQL hosting services, the Oracle Cloud VM provides full control over the MySQL server,<br> allowing the use of its complete feature set without restrictions.
-* While I considered using MongoDB, which I have experience with and which performs well on free-tier plans, setting up a robust NoSQL API typically requires more development time.<br> Given project time constraints, MySQL offered a faster and more straightforward path to implementation.
+## **Database**: Neon Postgres (managed Postgres)
+* The database is a **Postgres instance hosted on Neon**, a managed cloud Postgres provider.
+* This approach was chosen for its generous free tier, automatic scaling, and tight integration with modern frameworks.<br> Neon removes the need to maintain our own VM while still providing full-featured Postgres.
+* While I considered running my own MySQL instance on a VM, using Neon allowed me to focus on the application logic instead of server administration, which was important given the assessment’s time constraints.
 
 ## **Profile Integration**: Gravatar API
 * The Gravatar API was chosen to allow users to easily manage and update their profile pictures directly through their existing Gravatar accounts.
